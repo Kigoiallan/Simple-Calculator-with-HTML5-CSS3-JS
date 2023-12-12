@@ -1,77 +1,43 @@
-document.addEventListener("DOMContentLoaded", function () {
-    let display = document.getElementById("display");
-    let buttons = document.querySelectorAll("button");
+let firstNumber = "";
+let secondNumber = "";
+let operator = "";
+let result = "";
 
-    let currentInput = "";
-    let currentOperator = "";
-    let firstOperand = null;
+function updateDisplay(value) {
+    document.getElementById("display").textContent = value;
+}
 
-    buttons.forEach(button => {
-        button.addEventListener("click", handleClick);
-    });
-
-    function handleClick(event) {
-        const value = event.target.innerText;
-
-        if (!isNaN(parseInt(value)) || value === ".") {
-            handleNumber(value);
-        } else if (value === "C") {
-            clear();
-        } else if (value === "=") {
-            calculate();
-        } else {
-            handleOperator(value);
-        }
-
-        updateDisplay();
+function appendNumber(number) {
+    if (operator === "") {
+        firstNumber += number;
+        updateDisplay(firstNumber);
+    } else {
+        secondNumber += number;
+        updateDisplay(secondNumber);
     }
+}
 
-    function handleNumber(value) {
-        currentInput += value;
+function setOperator(op) {
+    if (firstNumber !== "") {
+        operator = op;
+        updateDisplay(firstNumber + " " + operator);
     }
+}
 
-    function handleOperator(operator) {
-        if (currentOperator !== "") {
-            calculate();
-        }
-
-        currentOperator = operator;
-        if (firstOperand === null) {
-            firstOperand = parseFloat(currentInput);
-            currentInput = "";
-        }
+function calculate() {
+    if (operator !== "" && secondNumber !== "") {
+        result = eval(firstNumber + operator + secondNumber);
+        updateDisplay(result);
+        firstNumber = result.toString();
+        secondNumber = "";
+        operator = "";
     }
+}
 
-    function calculate() {
-        if (currentInput !== "") {
-            const secondOperand = parseFloat(currentInput);
-            switch (currentOperator) {
-                case "+":
-                    firstOperand += secondOperand;
-                    break;
-                case "-":
-                    firstOperand -= secondOperand;
-                    break;
-                case "*":
-                    firstOperand *= secondOperand;
-                    break;
-                case "/":
-                    firstOperand /= secondOperand;
-                    break;
-            }
-
-            currentInput = "";
-            currentOperator = "";
-        }
-    }
-
-    function clear() {
-        currentInput = "";
-        currentOperator = "";
-        firstOperand = null;
-    }
-
-    function updateDisplay() {
-        display.innerText = currentInput !== "" ? currentInput : firstOperand !== null ? firstOperand : "0";
-    }
-});
+function clearDisplay() {
+    firstNumber = "";
+    secondNumber = "";
+    operator = "";
+    result = "";
+    updateDisplay("0");
+}
